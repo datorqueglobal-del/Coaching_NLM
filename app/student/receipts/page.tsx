@@ -4,7 +4,7 @@ export const dynamic = 'force-dynamic'
 
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
-import { useAuth } from '@/lib/auth'
+import { useAuth } from '@/lib/auth-username'
 import { FileText, Download, Search, Filter } from 'lucide-react'
 import { formatDate, formatCurrency } from '@/lib/utils'
 

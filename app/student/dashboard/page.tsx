@@ -4,7 +4,7 @@ export const dynamic = 'force-dynamic'
 
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
-import { useAuth } from '@/lib/auth'
+import { useAuth } from '@/lib/auth-username'
 import { Calendar, DollarSign, TrendingUp, AlertCircle, User, FileText } from 'lucide-react'
 import { formatDate, formatCurrency, calculateAttendancePercentage } from '@/lib/utils'
 
