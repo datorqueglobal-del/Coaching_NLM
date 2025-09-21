@@ -9,20 +9,20 @@ import LoadingSpinner from '@/components/ui/LoadingSpinner'
 export const dynamic = 'force-dynamic'
 
 export default function HomePage() {
-  const { user, loading } = useAuth()
+  const { user, userRole, loading } = useAuth()
   const router = useRouter()
 
   useEffect(() => {
     if (!loading && user) {
-      if (user.role === 'super_admin') {
+      if (userRole === 'super_admin') {
         router.push('/super-admin/dashboard')
-      } else if (user.role === 'coaching_admin') {
+      } else if (userRole === 'coaching_admin') {
         router.push('/coaching-admin/dashboard')
-      } else if (user.role === 'student') {
+      } else if (userRole === 'student') {
         router.push('/student/dashboard')
       }
     }
-  }, [user, loading, router])
+  }, [user, userRole, loading, router])
 
   if (loading) {
     return (

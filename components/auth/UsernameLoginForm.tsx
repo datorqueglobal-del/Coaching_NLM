@@ -6,13 +6,13 @@ import { useRouter } from 'next/navigation'
 import { Eye, EyeOff, Loader2 } from 'lucide-react'
 
 export default function UsernameLoginForm() {
-  const [username, setUsername] = useState('')
+  const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
   
-  const { signIn } = useAuth()
+  const { signIn, userRole } = useAuth()
   const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -21,16 +21,15 @@ export default function UsernameLoginForm() {
     setError('')
 
     try {
-      const result = await signIn(username, password)
+      const result = await signIn(email, password)
       
       if (result.success) {
         // Redirect based on role
-        const user = JSON.parse(localStorage.getItem('user') || '{}')
-        if (user.role === 'super_admin') {
+        if (userRole === 'super_admin') {
           router.push('/super-admin/dashboard')
-        } else if (user.role === 'coaching_admin') {
+        } else if (userRole === 'coaching_admin') {
           router.push('/coaching-admin/dashboard')
-        } else if (user.role === 'student') {
+        } else if (userRole === 'student') {
           router.push('/student/dashboard')
         }
       } else {
@@ -52,19 +51,19 @@ export default function UsernameLoginForm() {
       )}
 
       <div>
-        <label htmlFor="username" className="block text-sm font-medium text-gray-700">
-          Username
+        <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+          Email
         </label>
         <div className="mt-1">
           <input
-            id="username"
-            name="username"
-            type="text"
+            id="email"
+            name="email"
+            type="email"
             required
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             className="input w-full"
-            placeholder="Enter your username"
+            placeholder="Enter your email"
           />
         </div>
       </div>
@@ -120,7 +119,7 @@ export default function UsernameLoginForm() {
           Multi-Institute Coaching Management System
         </p>
         <div className="mt-2 text-xs text-gray-500">
-          <p>Super Admin: superadmin / superadmin123</p>
+          <p>Super Admin: admin@coaching.com / admin123</p>
           <p>Coaching Admin: [assigned by Super Admin]</p>
           <p>Student: [assigned by Coaching Admin]</p>
         </div>

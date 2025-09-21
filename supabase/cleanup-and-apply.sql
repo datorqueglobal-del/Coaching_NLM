@@ -45,11 +45,10 @@ CREATE TABLE public.institutes (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Users table (username-based authentication)
+-- Users table (email-based authentication with Supabase Auth)
 CREATE TABLE public.users (
-  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-  username TEXT UNIQUE NOT NULL,
-  password_hash TEXT NOT NULL,
+  id UUID REFERENCES auth.users(id) ON DELETE CASCADE PRIMARY KEY,
+  email TEXT NOT NULL,
   role user_role NOT NULL,
   institute_id UUID REFERENCES public.institutes(id) ON DELETE CASCADE,
   is_active BOOLEAN DEFAULT true,
@@ -164,7 +163,7 @@ CREATE TABLE public.notifications (
 );
 
 -- Create indexes for better performance
-CREATE INDEX idx_users_username ON public.users(username);
+CREATE INDEX idx_users_email ON public.users(email);
 CREATE INDEX idx_users_institute ON public.users(institute_id);
 CREATE INDEX idx_students_institute ON public.students(institute_id);
 CREATE INDEX idx_students_user_id ON public.students(user_id);
@@ -262,9 +261,8 @@ CREATE POLICY "Students can access own fee payments" ON public.fee_payments
     )
   );
 
--- Insert Super Admin user
-INSERT INTO public.users (username, password_hash, role, institute_id) VALUES 
-('superadmin', 'superadmin123', 'super_admin', NULL);
+-- Note: Super Admin user will be created through Supabase Auth
+-- You need to create the user in Supabase Auth first, then add the role record
 
 -- Insert sample institute
 INSERT INTO public.institutes (name, contact_person, contact_email, contact_phone, address, subscription_status) VALUES 

@@ -89,12 +89,12 @@ export default function CoachingAdminSidebar() {
               <div className="flex-shrink-0">
                 <div className="h-8 w-8 rounded-full bg-primary-100 flex items-center justify-center">
                   <span className="text-sm font-medium text-primary-600">
-                    {user?.username?.charAt(0).toUpperCase()}
+                    {user?.email?.charAt(0).toUpperCase()}
                   </span>
                 </div>
               </div>
               <div className="ml-3">
-                <p className="text-sm font-medium text-gray-700">{user?.username}</p>
+                <p className="text-sm font-medium text-gray-700">{user?.email}</p>
                 <p className="text-xs text-gray-500">Coaching Admin</p>
               </div>
             </div>
@@ -147,12 +147,12 @@ export default function CoachingAdminSidebar() {
                 <div className="flex-shrink-0">
                   <div className="h-8 w-8 rounded-full bg-primary-100 flex items-center justify-center">
                     <span className="text-sm font-medium text-primary-600">
-                      {user?.username?.charAt(0).toUpperCase()}
+                      {user?.email?.charAt(0).toUpperCase()}
                     </span>
                   </div>
                 </div>
                 <div className="ml-3 flex-1">
-                  <p className="text-sm font-medium text-gray-700">{user?.username}</p>
+                  <p className="text-sm font-medium text-gray-700">{user?.email}</p>
                   <p className="text-xs text-gray-500">Coaching Admin</p>
                 </div>
                 <button
