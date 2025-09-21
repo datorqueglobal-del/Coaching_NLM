@@ -47,10 +47,10 @@ export default function CoachingAdminsPage() {
       if (error) {
         console.error('Error fetching coaching admins:', error)
       } else {
-        // Map the data to fix the institutes array issue
+        // Map the data - handle institutes as array or single object
         const adminsData = data?.map(admin => ({
           ...admin,
-          institutes: admin.institutes[0] || { name: 'No Institute' }
+          institutes: Array.isArray(admin.institutes) ? admin.institutes[0] : admin.institutes || { name: 'No Institute' }
         })) || []
         setAdmins(adminsData as CoachingAdmin[])
       }
@@ -127,12 +127,18 @@ export default function CoachingAdminsPage() {
                 </div>
 
                 <div className="mt-4 flex space-x-2">
-                  <button className="btn btn-secondary btn-sm flex-1">
+                  <Link
+                    href={`/super-admin/admins/${admin.id}`}
+                    className="btn btn-secondary btn-sm flex-1"
+                  >
                     View Details
-                  </button>
-                  <button className="btn btn-primary btn-sm flex-1">
+                  </Link>
+                  <Link
+                    href={`/super-admin/admins/${admin.id}/edit`}
+                    className="btn btn-primary btn-sm flex-1"
+                  >
                     Manage
-                  </button>
+                  </Link>
                 </div>
               </div>
             </div>
