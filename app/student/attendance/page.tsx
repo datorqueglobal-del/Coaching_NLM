@@ -13,7 +13,7 @@ interface AttendanceRecord {
   date: string
   status: 'present' | 'absent' | 'late'
   remarks?: string
-  batches: {
+  batch: {
     name: string
   }
 }
@@ -83,7 +83,11 @@ export default function StudentAttendancePage() {
         return
       }
 
-      setAttendanceRecords(data || [])
+      const attendanceData = data?.map(record => ({
+        ...record,
+        batch: record.batches[0] || { name: 'Unknown Batch' }
+      })) || []
+      setAttendanceRecords(attendanceData)
 
       // Calculate stats
       const total = data?.length || 0
@@ -237,7 +241,7 @@ export default function StudentAttendancePage() {
                         {formatDate(record.date)}
                       </p>
                       <p className="text-sm text-gray-500">
-                        {record.batches.name}
+                        {record.batch.name}
                       </p>
                       {record.remarks && (
                         <p className="text-xs text-gray-400 mt-1">

@@ -68,7 +68,11 @@ export default function StudentReceiptsPage() {
       if (error) {
         console.error('Error fetching receipts:', error)
       } else {
-        setReceipts(data || [])
+        const receiptsData = data?.map(receipt => ({
+          ...receipt,
+          batch: receipt.batches[0] || { name: 'Unknown Batch' }
+        })) || []
+        setReceipts(receiptsData)
       }
     } catch (error) {
       console.error('Error fetching receipts:', error)

@@ -16,7 +16,7 @@ interface FeePayment {
   paid_date?: string
   payment_method?: string
   receipt_number?: string
-  batches: {
+  batch: {
     name: string
   }
 }
@@ -69,7 +69,11 @@ export default function StudentFeesPage() {
         return
       }
 
-      setPayments(data || [])
+      const paymentsData = data?.map(payment => ({
+        ...payment,
+        batch: payment.batches[0] || { name: 'Unknown Batch' }
+      })) || []
+      setPayments(paymentsData)
 
       // Calculate stats
       const total = data?.reduce((sum, p) => sum + p.amount, 0) || 0
@@ -249,7 +253,7 @@ export default function StudentFeesPage() {
                   {payments.map((payment) => (
                     <tr key={payment.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {payment.batches.name}
+                        {payment.batch.name}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                         {formatCurrency(payment.amount)}
