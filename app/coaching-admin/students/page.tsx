@@ -5,6 +5,7 @@ export const dynamic = 'force-dynamic'
 import { useEffect, useState } from 'react'
 import { useAuth } from '@/lib/auth-username'
 import { supabase } from '@/lib/supabase'
+import toast from 'react-hot-toast'
 import { Users, Plus, Search, Edit, Trash2, Eye, Filter } from 'lucide-react'
 import Link from 'next/link'
 import { formatDate } from '@/lib/utils'
@@ -97,23 +98,31 @@ export default function StudentsPage() {
   })
 
   const handleDeleteStudent = async (studentId: string) => {
-    if (!confirm('Are you sure you want to delete this student?')) return
+    if (!confirm('Are you sure you want to delete this student? This action cannot be undone and will permanently remove all student data.')) return
 
     try {
-      const { error } = await supabase
-        .from('students')
-        .update({ is_active: false })
-        .eq('id', studentId)
+      const response = await fetch('/api/coaching-admin/delete-student', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          student_id: studentId,
+        }),
+      })
 
-      if (error) {
-        console.error('Error deleting student:', error)
-        alert('Error deleting student')
-      } else {
-        fetchStudents() // Refresh the list
+      const result = await response.json()
+
+      if (!response.ok) {
+        toast.error(result.error || 'Error deleting student')
+        return
       }
+
+      toast.success('Student deleted successfully!')
+      fetchStudents() // Refresh the list
     } catch (error) {
       console.error('Error deleting student:', error)
-      alert('Error deleting student')
+      toast.error('An unexpected error occurred')
     }
   }
 
