@@ -17,7 +17,7 @@ interface Institute {
 }
 
 interface AdminFormData {
-  username: string
+  email: string
   password: string
   institute_id: string
 }
@@ -26,7 +26,7 @@ export default function NewCoachingAdminPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [institutes, setInstitutes] = useState<Institute[]>([])
   const [generatedCredentials, setGeneratedCredentials] = useState<{
-    username: string
+    email: string
     password: string
   } | null>(null)
   const router = useRouter()
@@ -66,15 +66,31 @@ export default function NewCoachingAdminPage() {
     setIsLoading(true)
     try {
       // Generate credentials if not provided
-      const username = data.username || generateUsername('admin', 'user')
+      const email = data.email || `${generateUsername('admin', 'user')}@coaching.com`
       const password = data.password || generatePassword(8)
 
-      // Create user record
+      // First, create the user in Supabase Auth
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email: email,
+        password: password,
+      })
+
+      if (authError) {
+        toast.error('Error creating auth user: ' + authError.message)
+        return
+      }
+
+      if (!authData.user) {
+        toast.error('Failed to create user account')
+        return
+      }
+
+      // Then, create the user record in our users table
       const { data: userData, error: userError } = await supabase
         .from('users')
         .insert({
-          username: username,
-          password_hash: password, // In production, hash this password
+          id: authData.user.id,
+          email: email,
           role: 'coaching_admin',
           institute_id: data.institute_id,
           is_active: true,
@@ -87,7 +103,7 @@ export default function NewCoachingAdminPage() {
         return
       }
 
-      setGeneratedCredentials({ username, password })
+      setGeneratedCredentials({ email, password })
       toast.success('Coaching admin created successfully!')
     } catch (error) {
       console.error('Error creating admin:', error)
@@ -120,12 +136,12 @@ export default function NewCoachingAdminPage() {
           <div className="card-content">
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700">Username</label>
+                <label className="block text-sm font-medium text-gray-700">Email</label>
                 <div className="mt-1 p-3 bg-gray-50 border rounded-md font-mono">
-                  {generatedCredentials.username}
+                  {generatedCredentials.email}
                 </div>
                 <p className="mt-1 text-sm text-gray-500">
-                  Coaching admin can use this username to login
+                  Coaching admin can use this email to login
                 </p>
               </div>
               <div>
@@ -195,19 +211,25 @@ export default function NewCoachingAdminPage() {
               </div>
 
               <div>
-                <label htmlFor="username" className="block text-sm font-medium text-gray-700">
-                  Username
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                  Email *
                 </label>
                 <input
-                  type="text"
-                  id="username"
-                  {...register('username')}
+                  type="email"
+                  id="email"
+                  {...register('email', { 
+                    required: 'Email is required',
+                    pattern: {
+                      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                      message: 'Invalid email address'
+                    }
+                  })}
                   className="input mt-1"
-                  placeholder="Leave empty for auto-generation"
+                  placeholder="Enter email address"
                 />
-                <p className="mt-1 text-sm text-gray-500">
-                  If left empty, username will be auto-generated
-                </p>
+                {errors.email && (
+                  <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
+                )}
               </div>
 
               <div>

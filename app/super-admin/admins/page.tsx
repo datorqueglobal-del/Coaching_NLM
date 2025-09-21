@@ -10,7 +10,7 @@ import Link from 'next/link'
 
 interface CoachingAdmin {
   id: string
-  username: string
+  email: string
   institute_id: string
   is_active: boolean
   created_at: string
@@ -33,7 +33,7 @@ export default function CoachingAdminsPage() {
         .from('users')
         .select(`
           id,
-          username,
+          email,
           institute_id,
           is_active,
           created_at,
@@ -99,7 +99,7 @@ export default function CoachingAdminsPage() {
               <div className="card-content">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
-                    <h3 className="text-lg font-medium text-gray-900">{admin.username}</h3>
+                    <h3 className="text-lg font-medium text-gray-900">{admin.email}</h3>
                     <p className="text-sm text-gray-500">{admin.institutes?.name || 'No Institute'}</p>
                     <div className="mt-2 flex items-center text-sm text-gray-500">
                       <Building2 className="h-4 w-4 mr-1" />
