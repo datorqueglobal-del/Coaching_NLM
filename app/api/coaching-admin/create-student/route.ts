@@ -48,6 +48,27 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    console.log('Created auth user:', authData.user.id, authData.user.email)
+
+    // First, add the user to the public.users table
+    const { error: userError } = await supabaseAdmin
+      .from('users')
+      .insert({
+        id: authData.user.id,
+        email: email,
+        role: 'student',
+        institute_id: institute_id,
+        is_active: true,
+      })
+
+    if (userError) {
+      console.error('Error creating user record:', userError)
+      return NextResponse.json(
+        { error: 'Error creating user record: ' + userError.message },
+        { status: 400 }
+      )
+    }
+
     // Create the student record
     const { data: studentData, error: studentError } = await supabaseAdmin
       .from('students')
