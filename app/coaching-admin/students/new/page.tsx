@@ -23,7 +23,6 @@ interface StudentFormData {
   date_of_birth: string
   gender: 'male' | 'female' | 'other'
   phone: string
-  email: string
   address: string
   parent_name: string
   parent_phone: string
@@ -36,6 +35,7 @@ export default function NewStudentPage() {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const [batches, setBatches] = useState<Batch[]>([])
+  const [generatedCredentials, setGeneratedCredentials] = useState<{email: string, password: string} | null>(null)
 
   const {
     register,
@@ -106,7 +106,6 @@ export default function NewStudentPage() {
           date_of_birth: data.date_of_birth,
           gender: data.gender,
           phone: data.phone,
-          email: data.email,
           address: data.address,
           parent_name: data.parent_name,
           parent_phone: data.parent_phone,
@@ -123,8 +122,13 @@ export default function NewStudentPage() {
         return
       }
 
+      // Store generated credentials
+      if (result.credentials) {
+        setGeneratedCredentials(result.credentials)
+      }
+
       toast.success('Student created successfully!')
-      router.push('/coaching-admin/students')
+      // Don't redirect immediately, show credentials first
     } catch (error) {
       console.error('Error creating student:', error)
       toast.error('An unexpected error occurred')
@@ -255,25 +259,26 @@ export default function NewStudentPage() {
                 </div>
 
                 <div className="sm:col-span-2">
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                    Email *
-                  </label>
-                  <input
-                    type="email"
-                    id="email"
-                    {...register('email', { 
-                      required: 'Email is required',
-                      pattern: {
-                        value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                        message: 'Invalid email address'
-                      }
-                    })}
-                    className="input mt-1"
-                    placeholder="Enter email address"
-                  />
-                  {errors.email && (
-                    <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
-                  )}
+                  <div className="rounded-md bg-blue-50 p-4">
+                    <div className="flex">
+                      <div className="flex-shrink-0">
+                        <User className="h-5 w-5 text-blue-400" />
+                      </div>
+                      <div className="ml-3">
+                        <h3 className="text-sm font-medium text-blue-800">
+                          Auto-Generated Credentials
+                        </h3>
+                        <div className="mt-2 text-sm text-blue-700">
+                          <p>Email and password will be automatically generated based on:</p>
+                          <ul className="mt-1 list-disc list-inside">
+                            <li>Student's first and last name</li>
+                            <li>Institute name</li>
+                            <li>Random 4-digit number for password</li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
                 <div className="sm:col-span-2">
@@ -290,30 +295,57 @@ export default function NewStudentPage() {
                 </div>
               </div>
 
+              {generatedCredentials ? (
+                <div className="rounded-md bg-green-50 p-4 mb-6">
+                  <div className="flex">
+                    <div className="flex-shrink-0">
+                      <GraduationCap className="h-5 w-5 text-green-400" />
+                    </div>
+                    <div className="ml-3">
+                      <h3 className="text-sm font-medium text-green-800">
+                        Student Created Successfully!
+                      </h3>
+                      <div className="mt-2 text-sm text-green-700">
+                        <p className="font-medium">Generated Login Credentials:</p>
+                        <div className="mt-2 space-y-1">
+                          <p><strong>Email:</strong> {generatedCredentials.email}</p>
+                          <p><strong>Password:</strong> {generatedCredentials.password}</p>
+                        </div>
+                        <p className="mt-2 text-xs">
+                          Please save these credentials securely. The student can use these to log in to their portal.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ) : null}
+
               <div className="flex justify-end space-x-3">
                 <Link
                   href="/coaching-admin/students"
                   className="btn btn-secondary"
                 >
-                  Cancel
+                  {generatedCredentials ? 'Back to Students' : 'Cancel'}
                 </Link>
-                <button
-                  type="submit"
-                  disabled={isLoading}
-                  className="btn btn-primary"
-                >
-                  {isLoading ? (
-                    <>
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                      Creating...
-                    </>
-                  ) : (
-                    <>
-                      <Save className="h-4 w-4 mr-2" />
-                      Create Student
-                    </>
-                  )}
-                </button>
+                {!generatedCredentials && (
+                  <button
+                    type="submit"
+                    disabled={isLoading}
+                    className="btn btn-primary"
+                  >
+                    {isLoading ? (
+                      <>
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                        Creating...
+                      </>
+                    ) : (
+                      <>
+                        <Save className="h-4 w-4 mr-2" />
+                        Create Student
+                      </>
+                    )}
+                  </button>
+                )}
               </div>
             </form>
           </div>

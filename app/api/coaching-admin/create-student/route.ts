@@ -10,7 +10,6 @@ export async function POST(request: NextRequest) {
       date_of_birth,
       gender,
       phone,
-      email,
       address,
       parent_name,
       parent_phone,
@@ -19,17 +18,39 @@ export async function POST(request: NextRequest) {
       batch_ids
     } = await request.json()
 
-    if (!email || !institute_id) {
+    if (!institute_id || !first_name || !last_name) {
       return NextResponse.json(
-        { error: 'Email and institute_id are required' },
+        { error: 'Institute ID, first name, and last name are required' },
         { status: 400 }
       )
     }
 
+    // Get institute name for email generation
+    const { data: instituteData, error: instituteError } = await supabaseAdmin
+      .from('institutes')
+      .select('name')
+      .eq('id', institute_id)
+      .single()
+
+    if (instituteError || !instituteData) {
+      return NextResponse.json(
+        { error: 'Institute not found' },
+        { status: 400 }
+      )
+    }
+
+    // Generate email: firstname.lastname@institutename.com
+    const instituteName = instituteData.name.toLowerCase().replace(/\s+/g, '')
+    const email = `${first_name.toLowerCase()}.${last_name.toLowerCase()}@${instituteName}.com`
+
+    // Generate random password: institutename + random 4 digits
+    const randomDigits = Math.floor(1000 + Math.random() * 9000)
+    const password = `${instituteName}${randomDigits}`
+
     // Create user in Supabase Auth with confirmed email
     const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
       email: email,
-      password: 'student123', // Default password
+      password: password, // Generated password
       email_confirm: true, // Automatically confirm the email
     })
 
@@ -121,6 +142,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       student: studentData,
+      credentials: {
+        email: email,
+        password: password
+      },
       message: 'Student created successfully!'
     })
 
