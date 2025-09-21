@@ -1,7 +1,7 @@
 'use client'
 
-import { useState } from 'react'
-import { useAuth } from '@/lib/auth-username'
+import { useState, useEffect } from 'react'
+import { useAuth } from '@/lib/auth-optimized'
 import { useRouter } from 'next/navigation'
 import { Eye, EyeOff, Loader2 } from 'lucide-react'
 
@@ -12,8 +12,21 @@ export default function UsernameLoginForm() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
   
-  const { signIn, userRole } = useAuth()
+  const { signIn, user, userRole } = useAuth()
   const router = useRouter()
+
+  // Handle redirect after successful login
+  useEffect(() => {
+    if (user && userRole && !isLoading) {
+      if (userRole === 'super_admin') {
+        router.push('/super-admin/dashboard')
+      } else if (userRole === 'coaching_admin') {
+        router.push('/coaching-admin/dashboard')
+      } else if (userRole === 'student') {
+        router.push('/student/dashboard')
+      }
+    }
+  }, [user, userRole, isLoading, router])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -24,20 +37,14 @@ export default function UsernameLoginForm() {
       const result = await signIn(email, password)
       
       if (result.success) {
-        // Redirect based on role
-        if (userRole === 'super_admin') {
-          router.push('/super-admin/dashboard')
-        } else if (userRole === 'coaching_admin') {
-          router.push('/coaching-admin/dashboard')
-        } else if (userRole === 'student') {
-          router.push('/student/dashboard')
-        }
+        // The useEffect will handle the redirect
+        console.log('Login successful, waiting for user data...')
       } else {
         setError(result.error || 'Login failed')
+        setIsLoading(false)
       }
     } catch (error) {
       setError('An unexpected error occurred')
-    } finally {
       setIsLoading(false)
     }
   }
