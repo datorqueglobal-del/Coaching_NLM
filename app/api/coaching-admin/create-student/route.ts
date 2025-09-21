@@ -25,6 +25,12 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Ensure batch_ids is an array
+    const batchIdsArray = Array.isArray(batch_ids) ? batch_ids : (batch_ids ? [batch_ids] : [])
+    
+    console.log('Received batch_ids:', batch_ids, 'Type:', typeof batch_ids)
+    console.log('Processed batchIdsArray:', batchIdsArray)
+
     // Get institute name for email generation
     const { data: instituteData, error: instituteError } = await supabaseAdmin
       .from('institutes')
@@ -56,6 +62,15 @@ export async function POST(request: NextRequest) {
 
     if (authError) {
       console.error('Error creating auth user:', authError)
+      
+      // Handle specific error cases
+      if (authError.message.includes('already been registered') || authError.message.includes('email_exists')) {
+        return NextResponse.json(
+          { error: 'A student with this email already exists. Please try again or contact support.' },
+          { status: 400 }
+        )
+      }
+      
       return NextResponse.json(
         { error: 'Error creating student account: ' + authError.message },
         { status: 400 }
@@ -121,8 +136,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Enroll student in selected batches
-    if (batch_ids && batch_ids.length > 0) {
-      const enrollments = batch_ids.map((batchId: string) => ({
+    if (batchIdsArray.length > 0) {
+      const enrollments = batchIdsArray.map((batchId: string) => ({
         student_id: studentData.id,
         batch_id: batchId,
         institute_id: institute_id,
