@@ -83,34 +83,23 @@ export default function NewStudentPage() {
       return
     }
 
+    if (data.batch_ids.length === 0) {
+      toast.error('Please select at least one batch')
+      return
+    }
+
     setIsLoading(true)
     try {
       // Generate student ID if not provided
       const studentId = data.student_id || generateStudentId()
 
-      // First, create a user account for the student
-      const { data: authData, error: authError } = await supabase.auth.admin.createUser({
-        email: data.email,
-        password: 'student123', // Default password
-        email_confirm: true,
-      })
-
-      if (authError) {
-        toast.error('Error creating student account: ' + authError.message)
-        return
-      }
-
-      if (!authData.user) {
-        toast.error('Failed to create student account')
-        return
-      }
-
-      // Create the student record
-      const { data: studentData, error: studentError } = await supabase
-        .from('students')
-        .insert({
-          user_id: authData.user.id,
-          institute_id: user.institute_id,
+      // Call our API route to create the student
+      const response = await fetch('/api/coaching-admin/create-student', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
           student_id: studentId,
           first_name: data.first_name,
           last_name: data.last_name,
@@ -122,33 +111,16 @@ export default function NewStudentPage() {
           parent_name: data.parent_name,
           parent_phone: data.parent_phone,
           parent_email: data.parent_email,
-          is_active: true,
-        })
-        .select()
-        .single()
-
-      if (studentError) {
-        toast.error('Error creating student: ' + studentError.message)
-        return
-      }
-
-      // Enroll student in selected batches
-      if (data.batch_ids && data.batch_ids.length > 0) {
-        const enrollments = data.batch_ids.map(batchId => ({
-          student_id: studentData.id,
-          batch_id: batchId,
           institute_id: user.institute_id,
-          is_active: true,
-        }))
+          batch_ids: data.batch_ids,
+        }),
+      })
 
-        const { error: enrollmentError } = await supabase
-          .from('student_batches')
-          .insert(enrollments)
+      const result = await response.json()
 
-        if (enrollmentError) {
-          console.error('Error enrolling in batches:', enrollmentError)
-          toast.error('Student created but batch enrollment failed')
-        }
+      if (!response.ok) {
+        toast.error(result.error || 'Error creating student')
+        return
       }
 
       toast.success('Student created successfully!')
