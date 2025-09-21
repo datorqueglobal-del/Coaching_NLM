@@ -1,5 +1,7 @@
 'use client'
 
+export const dynamic = 'force-dynamic'
+
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { Calendar, Users, CheckCircle, XCircle, Clock } from 'lucide-react'
@@ -84,7 +86,7 @@ export default function AttendancePage() {
       if (error) {
         console.error('Error fetching students:', error)
       } else {
-        const studentList = data?.map(item => item.students).filter(Boolean) || []
+        const studentList: Student[] = data?.map((item: any) => item.students).filter(Boolean) || []
         setStudents(studentList)
         
         // Load existing attendance for the date

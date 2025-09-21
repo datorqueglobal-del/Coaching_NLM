@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { Users, GraduationCap, Calendar, DollarSign, TrendingUp, AlertCircle } from 'lucide-react'
 
+export const dynamic = 'force-dynamic'
+
 interface DashboardStats {
   totalStudents: number
   totalBatches: number

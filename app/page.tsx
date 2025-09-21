@@ -6,6 +6,8 @@ import { useEffect } from 'react'
 import LoginForm from '@/components/auth/LoginForm'
 import LoadingSpinner from '@/components/ui/LoadingSpinner'
 
+export const dynamic = 'force-dynamic'
+
 export default function HomePage() {
   const { user, userRole, loading } = useAuth()
   const router = useRouter()
