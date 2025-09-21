@@ -69,37 +69,23 @@ export default function NewCoachingAdminPage() {
       const email = data.email || `${generateUsername('admin', 'user')}@coaching.com`
       const password = data.password || generatePassword(8)
 
-      // First, create the user in Supabase Auth
-      const { data: authData, error: authError } = await supabase.auth.signUp({
-        email: email,
-        password: password,
+      // Call our API route to create the admin
+      const response = await fetch('/api/admin/create-coaching-admin', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: email,
+          password: password,
+          institute_id: data.institute_id,
+        }),
       })
 
-      if (authError) {
-        toast.error('Error creating auth user: ' + authError.message)
-        return
-      }
+      const result = await response.json()
 
-      if (!authData.user) {
-        toast.error('Failed to create user account')
-        return
-      }
-
-      // Then, create the user record in our users table
-      const { data: userData, error: userError } = await supabase
-        .from('users')
-        .insert({
-          id: authData.user.id,
-          email: email,
-          role: 'coaching_admin',
-          institute_id: data.institute_id,
-          is_active: true,
-        })
-        .select()
-        .single()
-
-      if (userError) {
-        toast.error('Error creating admin: ' + userError.message)
+      if (!response.ok) {
+        toast.error(result.error || 'Error creating admin')
         return
       }
 
