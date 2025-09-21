@@ -5,10 +5,10 @@ export const dynamic = 'force-dynamic'
 import { useAuth } from '@/lib/auth-username'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
-import StudentSidebar from '@/components/student/StudentSidebar'
+import CoachingAdminSidebar from '@/components/coaching-admin/CoachingAdminSidebar'
 import LoadingSpinner from '@/components/ui/LoadingSpinner'
 
-export default function StudentLayout({
+export default function CoachingAdminLayout({
   children,
 }: {
   children: React.ReactNode
@@ -20,7 +20,7 @@ export default function StudentLayout({
     if (!loading) {
       if (!user) {
         router.push('/')
-      } else if (user.role !== 'student') {
+      } else if (user.role !== 'coaching_admin') {
         router.push('/')
       }
     }
@@ -34,13 +34,13 @@ export default function StudentLayout({
     )
   }
 
-  if (!user || user.role !== 'student') {
+  if (!user || user.role !== 'coaching_admin') {
     return null
   }
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <StudentSidebar />
+      <CoachingAdminSidebar />
       <div className="lg:pl-64">
         <main className="py-6">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
