@@ -131,12 +131,18 @@ export default function InstitutesPage() {
                 </div>
 
                 <div className="mt-4 flex space-x-2">
-                  <button className="btn btn-secondary btn-sm flex-1">
+                  <Link
+                    href={`/super-admin/institutes/${institute.id}`}
+                    className="btn btn-secondary btn-sm flex-1"
+                  >
                     View Details
-                  </button>
-                  <button className="btn btn-primary btn-sm flex-1">
+                  </Link>
+                  <Link
+                    href={`/super-admin/institutes/${institute.id}/edit`}
+                    className="btn btn-primary btn-sm flex-1"
+                  >
                     Manage
-                  </button>
+                  </Link>
                 </div>
               </div>
             </div>
