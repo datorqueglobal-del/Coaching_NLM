@@ -1,6 +1,6 @@
 'use client'
 
-import { useAuth } from '@/lib/auth-username'
+import { useAuth } from '@/lib/auth-optimized'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 import UsernameLoginForm from '@/components/auth/UsernameLoginForm'
