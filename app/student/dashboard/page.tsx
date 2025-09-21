@@ -261,7 +261,7 @@ export default function StudentDashboard() {
               <button className="w-full text-left px-4 py-3 border border-gray-200 rounded-md hover:bg-gray-50">
                 <div className="flex items-center">
                   <User className="h-5 w-5 text-gray-400 mr-3" />
-                  <span className="text-sm font-medium">Update Profile</span>
+                  <span className="text-sm font-medium">View Profile</span>
                 </div>
               </button>
             </div>
