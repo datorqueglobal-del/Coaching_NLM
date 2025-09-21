@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useAuth } from '@/lib/auth-username'
+import { useAuth } from '@/lib/auth-optimized'
 import {
   LayoutDashboard,
   Building2,

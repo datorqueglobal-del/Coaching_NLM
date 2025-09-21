@@ -4,7 +4,7 @@ export const dynamic = 'force-dynamic'
 
 import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { useAuth } from '@/lib/auth-username'
+import { useAuth } from '@/lib/auth-optimized'
 import { supabase } from '@/lib/supabase'
 import toast from 'react-hot-toast'
 import { ArrowLeft, Edit, Key, User, Phone, Mail, MapPin, Calendar, GraduationCap } from 'lucide-react'

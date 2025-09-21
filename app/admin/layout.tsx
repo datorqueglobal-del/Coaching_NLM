@@ -2,7 +2,7 @@
 
 export const dynamic = 'force-dynamic'
 
-import { useAuth } from '@/lib/auth'
+import { useAuth } from '@/lib/auth-optimized'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 import AdminSidebar from '@/components/admin/AdminSidebar'

@@ -3,7 +3,7 @@
 export const dynamic = 'force-dynamic'
 
 import { useEffect, useState } from 'react'
-import { useAuth } from '@/lib/auth-username'
+import { useAuth } from '@/lib/auth-optimized'
 import { supabase } from '@/lib/supabase'
 import toast from 'react-hot-toast'
 import { Users, Plus, Search, Edit, Trash2, Eye, Filter } from 'lucide-react'

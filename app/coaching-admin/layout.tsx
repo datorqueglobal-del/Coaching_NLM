@@ -2,7 +2,7 @@
 
 export const dynamic = 'force-dynamic'
 
-import { useAuth } from '@/lib/auth-username'
+import { useAuth } from '@/lib/auth-optimized'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 import CoachingAdminSidebar from '@/components/coaching-admin/CoachingAdminSidebar'
