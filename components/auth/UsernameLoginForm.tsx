@@ -18,6 +18,7 @@ export default function UsernameLoginForm() {
   // Handle redirect after successful login
   useEffect(() => {
     if (user && userRole && !isLoading) {
+      console.log('Redirecting user:', { user, userRole })
       if (userRole === 'super_admin') {
         router.push('/super-admin/dashboard')
       } else if (userRole === 'coaching_admin') {
@@ -39,6 +40,14 @@ export default function UsernameLoginForm() {
       if (result.success) {
         // The useEffect will handle the redirect
         console.log('Login successful, waiting for user data...')
+        
+        // Add a timeout to prevent infinite loading
+        setTimeout(() => {
+          if (isLoading) {
+            setError('Login timeout - please try again')
+            setIsLoading(false)
+          }
+        }, 10000) // 10 second timeout
       } else {
         setError(result.error || 'Login failed')
         setIsLoading(false)

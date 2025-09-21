@@ -48,6 +48,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     try {
+      console.log('Fetching user role for:', userId)
       const { data, error } = await supabase
         .from('users')
         .select('role, institute_id, is_active, email')
@@ -69,6 +70,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         is_active: data.is_active
       }
 
+      console.log('User data fetched:', userData)
+
       // Cache the user data
       userCache[userId] = {
         user: userData,
@@ -77,10 +80,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       setUser(userData)
       setUserRole(data.role)
+      setLoading(false)
     } catch (error) {
       console.error('Error fetching user role:', error)
       setUserRole('student')
-    } finally {
       setLoading(false)
     }
   }, [])
@@ -128,6 +131,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [fetchUserRole])
 
   const signIn = useCallback(async (email: string, password: string) => {
+    setLoading(true)
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
@@ -135,6 +139,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       })
 
       if (error) {
+        setLoading(false)
         return { success: false, error: error.message }
       }
 
@@ -143,9 +148,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return { success: true }
       }
 
+      setLoading(false)
       return { success: false, error: 'No user data returned' }
     } catch (error) {
       console.error('Sign in error:', error)
+      setLoading(false)
       return { success: false, error: 'An unexpected error occurred' }
     }
   }, [fetchUserRole])
