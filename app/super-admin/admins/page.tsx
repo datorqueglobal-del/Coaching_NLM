@@ -47,7 +47,12 @@ export default function CoachingAdminsPage() {
       if (error) {
         console.error('Error fetching coaching admins:', error)
       } else {
-        setAdmins(data || [])
+        // Map the data to fix the institutes array issue
+        const adminsData = data?.map(admin => ({
+          ...admin,
+          institutes: admin.institutes[0] || { name: 'No Institute' }
+        })) || []
+        setAdmins(adminsData as CoachingAdmin[])
       }
     } catch (error) {
       console.error('Error fetching coaching admins:', error)
