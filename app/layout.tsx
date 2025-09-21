@@ -2,6 +2,7 @@ import './globals.css'
 import { Inter } from 'next/font/google'
 import { AuthProvider } from '@/lib/auth-optimized'
 import { Toaster } from 'react-hot-toast'
+import '@/lib/debug-supabase'
 
 const inter = Inter({ subsets: ['latin'] })
 
