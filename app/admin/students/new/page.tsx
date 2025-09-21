@@ -5,7 +5,7 @@ export const dynamic = 'force-dynamic'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useRouter } from 'next/navigation'
-import { supabase } from '@/lib/supabase'
+import { supabase, supabaseAdmin } from '@/lib/supabase'
 import { generateUsername, generatePassword } from '@/lib/utils'
 import toast from 'react-hot-toast'
 import { ArrowLeft, Save } from 'lucide-react'
@@ -49,8 +49,8 @@ export default function NewStudentPage() {
       const username = generateUsername(data.first_name, data.last_name)
       const password = generatePassword(8)
 
-      // Create user account
-      const { data: authData, error: authError } = await supabase.auth.admin.createUser({
+      // Create user account using admin client
+      const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
         email: data.email,
         password: password,
         email_confirm: true,
@@ -61,8 +61,8 @@ export default function NewStudentPage() {
         return
       }
 
-      // Create user record
-      const { error: userError } = await supabase
+      // Create user record using admin client
+      const { error: userError } = await supabaseAdmin
         .from('users')
         .insert({
           id: authData.user.id,
@@ -75,8 +75,8 @@ export default function NewStudentPage() {
         return
       }
 
-      // Create student record
-      const { error: studentError } = await supabase
+      // Create student record using admin client
+      const { error: studentError } = await supabaseAdmin
         .from('students')
         .insert({
           user_id: authData.user.id,
@@ -98,7 +98,7 @@ export default function NewStudentPage() {
         return
       }
 
-      setGeneratedCredentials({ username, password })
+      setGeneratedCredentials({ username: data.email, password })
       toast.success('Student created successfully!')
     } catch (error) {
       console.error('Error creating student:', error)
@@ -131,10 +131,13 @@ export default function NewStudentPage() {
           <div className="card-content">
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700">Username/Email</label>
+                <label className="block text-sm font-medium text-gray-700">Login Email</label>
                 <div className="mt-1 p-3 bg-gray-50 border rounded-md font-mono">
                   {generatedCredentials.username}
                 </div>
+                <p className="mt-1 text-sm text-gray-500">
+                  Student can use this email to login to their portal
+                </p>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700">Password</label>

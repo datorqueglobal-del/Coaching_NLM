@@ -18,8 +18,6 @@ export default function HomePage() {
         router.push('/admin/dashboard')
       } else if (userRole === 'student') {
         router.push('/student/dashboard')
-      } else if (userRole === 'parent') {
-        router.push('/parent/dashboard')
       }
     }
   }, [user, userRole, loading, router])

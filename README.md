@@ -5,9 +5,8 @@ A comprehensive student management system for coaching classes built with Next.j
 ## Features
 
 ### 👤 User Roles
-- **Admin (Super User)**: Complete system management
+- **Admin (Super User)**: Complete system management and student account creation
 - **Student**: View personal data, attendance, and fees
-- **Parent**: Access child's information using student credentials
 
 ### 🔑 Core Modules
 
@@ -29,7 +28,7 @@ A comprehensive student management system for coaching classes built with Next.j
 - Email notifications for pending/overdue fees
 
 #### 4. Dashboard & Analytics
-- **Admin Dashboard**: Quick stats, notifications, analytics
+- **Admin Dashboard**: Quick stats, notifications, analytics, student management
 - **Student Dashboard**: Personal attendance, fee status, profile info
 - Real-time data visualization
 
@@ -118,8 +117,9 @@ The system uses the following main tables:
 
 ### Authentication
 - Supabase Auth with email/password
-- Role-based access control (Admin, Student, Parent)
+- Role-based access control (Admin, Student)
 - Automatic redirects based on user role
+- Admin creates student accounts with credentials
 
 ### Student Management
 - CRUD operations for student data
