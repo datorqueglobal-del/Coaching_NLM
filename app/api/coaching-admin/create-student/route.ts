@@ -122,6 +122,7 @@ export async function POST(request: NextRequest) {
         parent_name: parent_name,
         parent_phone: parent_phone,
         parent_email: parent_email,
+        generated_password: password, // Store the generated password
         is_active: true,
       })
       .select()

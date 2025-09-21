@@ -40,6 +40,17 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Update the stored password in the students table
+    const { error: studentUpdateError } = await supabaseAdmin
+      .from('students')
+      .update({ generated_password: new_password })
+      .eq('id', student_id)
+
+    if (studentUpdateError) {
+      console.error('Error updating stored password:', studentUpdateError)
+      // Don't fail the operation, just log the error
+    }
+
     return NextResponse.json({
       success: true,
       message: 'Password updated successfully!'

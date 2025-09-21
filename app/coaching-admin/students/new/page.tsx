@@ -125,10 +125,19 @@ export default function NewStudentPage() {
       // Store generated credentials
       if (result.credentials) {
         setGeneratedCredentials(result.credentials)
+        // Show credentials in toast
+        toast.success(
+          `Student created! Email: ${result.credentials.email}, Password: ${result.credentials.password}`,
+          { duration: 8000 }
+        )
+        // Redirect after a short delay to show the toast
+        setTimeout(() => {
+          router.push('/coaching-admin/students')
+        }, 2000)
+      } else {
+        toast.success('Student created successfully!')
+        router.push('/coaching-admin/students')
       }
-
-      toast.success('Student created successfully!')
-      // Don't redirect immediately, show credentials first
     } catch (error) {
       console.error('Error creating student:', error)
       toast.error('An unexpected error occurred')

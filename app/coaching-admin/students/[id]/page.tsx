@@ -23,6 +23,7 @@ interface Student {
   parent_name: string
   parent_phone: string
   parent_email: string
+  generated_password?: string
   is_active: boolean
   created_at: string
   batches: {
@@ -271,7 +272,15 @@ export default function StudentDetailPage() {
 
                 <div>
                   <dt className="text-sm font-medium text-gray-500">Password</dt>
-                  <dd className="mt-1 text-sm text-gray-500">••••••••</dd>
+                  <dd className="mt-1 text-sm text-gray-900 font-mono bg-gray-100 px-2 py-1 rounded">
+                    {student.generated_password || 'Password not available'}
+                  </dd>
+                  <p className="mt-1 text-xs text-gray-500">
+                    {student.generated_password 
+                      ? 'This is the auto-generated password. Use the update button below to change it.'
+                      : 'Password was not stored during creation. Use the update button to set a new password.'
+                    }
+                  </p>
                 </div>
 
                 <button
